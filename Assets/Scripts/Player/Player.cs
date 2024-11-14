@@ -2,69 +2,60 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    // This for getting the instace of Player Singleton
     public static Player Instance { get; private set; }
-    public PlayerMovement playerMovement; // Komponen untuk menggerakkan pemain
-    public Animator animator; // Komponen animator
 
-    private Weapon equippedWeapon; // Variabel untuk menyimpan senjata yang diambil
+    // Getting the PlayerMovement methods
+    PlayerMovement playerMovement;
+    // Animator
+    Animator animator;
 
-    private void Awake()
+
+    // Key for Singleton
+    void Awake()
     {
-        // Singleton pattern untuk memastikan hanya ada satu instance dari Player
-        if (Instance == null)
+        if (Instance != null && Instance != this)
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject); // Tidak menghancurkan Player saat scene berpindah
+            Destroy(this);
+            return;
         }
-        else
-        {
-            Destroy(gameObject); // Menghancurkan duplicate Player
-        }
+
+        Instance = this;
+
+        DontDestroyOnLoad(gameObject);
     }
 
-    private void Start()
+    // Getting Component
+    void Start()
     {
-        // Mengambil komponen PlayerMovement dan Animator
-       playerMovement = GetComponent<PlayerMovement>();
-    animator = GetComponentInChildren<Animator>();
+        // Get PlayerMovement components
+        playerMovement = GetComponent<PlayerMovement>();
 
-        // Debug log untuk memastikan animator ditemukan
-        if (animator == null)
-        {
-            Debug.LogWarning("Animator is null, please check if it is properly assigned in the Inspector.");
-        }
+        // Get Animator components
+        animator = GameObject.Find("EngineEffect").GetComponent<Animator>();
     }
 
-    private void FixedUpdate()
+    // Using FixedUpdate to Move because of physics
+    void FixedUpdate()
     {
-        // Memanggil metode Move dari PlayerMovement
         playerMovement.Move();
     }
 
-    private void LateUpdate()
+    // LateUpdate for animation related
+    void LateUpdate()
     {
-        // Set animator's IsMoving parameter berdasarkan status pergerakan
-        if (animator != null) // Pastikan animator tidak null
-        {
-            animator.SetBool("IsMoving", playerMovement.IsMoving());
-        }
-        else
-        {
-            Debug.LogWarning("Animator is null, unable to set IsMoving.");
-        }
+        playerMovement.MoveBound();
+        animator.SetBool("IsMoving", playerMovement.IsMoving());
     }
 
-    public void EquipWeapon(Weapon newWeapon)
-    {
-        equippedWeapon = newWeapon;
-        Debug.Log("Senjata diambil: " + newWeapon.name);
-        // Tambahkan logika lain jika diperlukan
-    }
+    private WeaponPickup currentWeaponPickup;
 
-    public bool HasWeapon { get; set; } = false;
-
-    public void PickUpWeapon()
+    public void SwitchWeapon(Weapon newWeapon, WeaponPickup newWeaponPickup)
     {
-        HasWeapon = true;
+        if (currentWeaponPickup != null)
+        {
+            currentWeaponPickup.PickupHandler(true);  // Make the previous weapon pickup visible again
+        }
+        currentWeaponPickup = newWeaponPickup;
     }
 }
