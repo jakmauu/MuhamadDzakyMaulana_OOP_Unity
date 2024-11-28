@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4859003669756447435}
   - component: {fileID: 6173546493563082827}
   - component: {fileID: 859351243290998449}
+  - component: {fileID: -2413911479559936677}
   m_Layer: 0
   m_Name: EnemyTargeting
   m_TagString: Untagged
@@ -200,3 +201,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 10
+--- !u!114 &-2413911479559936677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5022615538341502380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a928497899786a340a519b8bd8ac9f61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blinkingCount: 7
+  blinkInterval: 0.1
+  blinkMaterial: {fileID: 2100000, guid: c5dfcc26bf8a83142b75e9d2e4bf5a0c, type: 2}
+  isInvincible: 0

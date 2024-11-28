@@ -2,54 +2,29 @@ using UnityEngine;
 
 public class EnemyBoss : Enemy
 {
-    public GameObject bulletPrefab; // Assign bullet prefab in the Inspector
-    public Transform bulletSpawnPoint; // Assign spawn point in the Inspector
+    private Vector2 direction;
+    private float speed = 2f; // Set your desired speed
 
-    private float shootInterval = 0.8f; // Set the shooting interval
-    private float shootTimer = 0f;
-
-    private float speed = 1f; // Slow speed for boss movement
+    protected override void Start()
+    {
+        base.Start();
+        // Determine spawn direction: move left if spawned on the right side, and vice versa
+        direction = transform.position.x > 0 ? Vector2.left : Vector2.right;
+    }
 
     private void Update()
     {
-        Move();
-        HandleShooting();
-    }
+        transform.Translate(direction * speed * Time.deltaTime);
 
-    private void Move()
-    {
-        // Basic left-right movement (can adjust movement pattern as needed)
-        transform.Translate(Vector2.left * speed * Time.deltaTime);
-        if (transform.position.x < -5 || transform.position.x > 5) // Adjust boundaries for boss
+        // Reverse direction when the enemy goes beyond the screen bounds
+        if (transform.position.x < -10 || transform.position.x > 10) // Adjust screen boundaries as needed
         {
-            speed = -speed;
+            direction = -direction;
         }
     }
 
-    private void HandleShooting()
+    private void OnBecameInvisible()
     {
-        shootTimer += Time.deltaTime;
-        if (shootTimer >= shootInterval)
-        {
-            Shoot();
-            shootTimer = 0f;
-        }
-    }
-
-    private void Shoot()
-    {
-        if (bulletPrefab != null && bulletSpawnPoint != null)
-        {
-            Instantiate(bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
-        }
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            // Damage player or apply other effects
-            Destroy(gameObject);  // Destroy or return to object pool
-        }
-    }
+        Destroy(gameObject);  // Destroy or return to object pool
+    }   
 }

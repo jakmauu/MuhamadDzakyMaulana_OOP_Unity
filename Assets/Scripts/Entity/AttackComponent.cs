@@ -1,21 +1,47 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(BoxCollider2D))]
 public class AttackComponent : MonoBehaviour
 {
-    public int damage = 10; // Damage dealt by this entity
+    public Bullet bullet;  // Bullet used for attack
+    public int damage;     // Damage dealt by the object
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Check if the colliding object has a HitboxComponent
-        if (other.TryGetComponent(out HitboxComponent hitbox))
+        var hitbox = GetComponent<HitboxComponent>();
+        if (collision.gameObject.tag == gameObject.tag)
         {
-            // Prevent self-damage by checking tags or other identifiers if needed
-            if (other.CompareTag(gameObject.tag))
-                return;
+            return;
+        }
+        if (collision.CompareTag("Bullet"))
+        {
+            // int damage = collision.GetComponent<Bullet>().damage; // Get damage from Bullet
 
-            // Apply damage to the other entity
-            hitbox.Damage(damage);
+            if (hitbox != null)
+            {
+                hitbox.Damage(collision.GetComponent<Bullet>()); // Apply damage using HitboxComponent with Bullet parameter
+                Debug.Log("Bullet damage applied.");
+            }
+        }
+
+        if (collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "Player")
+        {
+            hitbox = GetComponent<HitboxComponent>();
+            if (hitbox != null)
+            {
+                hitbox.Damage(damage);
+                Debug.Log("Direct damage applied.");
+                
+                var invincibility = collision.GetComponent<InvicibiltyComponent>();
+                if (invincibility != null)
+                {
+                    invincibility.StartInvincibility();
+                    Debug.Log("Invincibility started for collided object."); // Start the invincibility effect
+                }
+            }
         }
     }
 }
+
