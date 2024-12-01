@@ -1,57 +1,98 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
     [Header("Enemy Prefabs")]
-    public Enemy spawnedEnemy; // Prefab enemy yang akan di-spawn
+    public Enemy spawnedEnemy;
 
-    [SerializeField] private int minimumKillsToIncreaseSpawnCount = 3; // Minimum kill untuk meningkatkan jumlah spawn
-    public int totalKill = 0; // Jumlah total kill yang dilakukan pemain
-    private int totalKillWave = 0; // Jumlah total kill dalam satu wave
 
-    [SerializeField] private float spawnInterval = 3f; // Interval waktu antar spawn
+    [SerializeField] private int minimumKillsToIncreaseSpawnCount = 3;
+    public int totalKill = 0;
+    private int totalKillWave = 0;
+
+
+    [SerializeField] private float spawnInterval = 3f;
+
 
     [Header("Spawned Enemies Counter")]
-    public int spawnCount = 0; // Jumlah enemy yang di-spawn saat ini
-    public int defaultSpawnCount = 1; // Default jumlah enemy yang di-spawn pada awal
-    public int spawnCountMultiplier = 1; // Faktor pengali jumlah enemy
-    public int multiplierIncreaseCount = 1; // Increment multiplier setiap peningkatan jumlah spawn
+    public int spawnCount = 0;
+    public int defaultSpawnCount = 1;
+    public int spawnCountMultiplier = 1;
+    public int multiplierIncreaseCount = 1;
 
-    public CombatManager combatManager; // Referensi ke CombatManager
-    public bool isSpawning = false; // Apakah spawner sedang aktif
 
-    private void Start()
+    public CombatManager combatManager;
+
+
+    public bool isSpawning = false;
+
+    // Start is called before the first frame update
+    void Start()
     {
-        StartSpawning(); // Memulai proses spawning
+        spawnCount = defaultSpawnCount;
     }
 
-    public void StartSpawning()
+    public void stopSpawning()
     {
-        if (!isSpawning)
+        isSpawning = false;
+    }
+
+    public void startSpawning()
+    {
+        if (spawnedEnemy.level <= combatManager.waveNumber)
         {
             isSpawning = true;
-            InvokeRepeating(nameof(SpawnEnemies), 0, spawnInterval); // Memulai spawn dengan interval tertentu
+            StartCoroutine(SpawnEnemies());
         }
     }
 
-    public void SpawnEnemies()
+    public IEnumerator SpawnEnemies()
     {
-        for (int i = 0; i < spawnCount; i++)
+        if (isSpawning)
         {
-            if (spawnedEnemy != null)
+            if (spawnCount == 0)
             {
-                Instantiate(spawnedEnemy, transform.position, Quaternion.identity); // Spawn enemy pada posisi spawner
+                spawnCount = defaultSpawnCount;
+            }
+            int i = spawnCount;
+            while (i > 0)
+            {
+
+                Enemy enemy = Instantiate(spawnedEnemy);
+                enemy.enemySpawner = this;
+                enemy.combatManager = combatManager;
+                --i;
+                spawnCount = i;
+                if (combatManager != null)
+                {
+                    combatManager.totalEnemies++;
+                }
+
+                yield return new WaitForSeconds(spawnInterval);
             }
         }
-        totalKillWave = 0; // Reset jumlah kill dalam wave
+
     }
 
-    public void IncreaseSpawnCount()
+    public void onDeath()
     {
-        if (totalKill >= minimumKillsToIncreaseSpawnCount)
+        Debug.Log("Enemy Killed");
+        // Call this method when an enemy is killed
+        totalKill++;
+        ++totalKillWave;
+        Debug.Log(totalKillWave);
+
+        // Check if totalKillWave has reached the minimumKillsToIncreaseSpawnCount
+        if (totalKillWave == minimumKillsToIncreaseSpawnCount)
         {
-            spawnCount += multiplierIncreaseCount; // Tambahkan jumlah spawn
-            totalKill = 0; // Reset jumlah kill
+            Debug.Log("Increasing spawn count");
+            totalKillWave = 0; // Reset totalKillWave for the new wave
+            defaultSpawnCount *= spawnCountMultiplier; // Increase defaultSpawnCount
+            if (spawnCountMultiplier < 3)
+                spawnCountMultiplier += multiplierIncreaseCount; // Increase the multiplier
+            spawnCount = defaultSpawnCount; // Update spawnCount
         }
     }
 }

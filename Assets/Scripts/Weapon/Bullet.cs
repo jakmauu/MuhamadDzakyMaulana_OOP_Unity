@@ -1,45 +1,55 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Pool;
+using UnityEngine.Pool; 
 
 public class Bullet : MonoBehaviour
 {
-    public float bulletSpeed = 20f;
-    public int damage = 10;
-    private Rigidbody2D rb;
+    [Header("Bullet Stats")]
+    public float bulletSpeed = 20;
+    public int damage;
+    private Rigidbody2D rb;    
 
-    // Reference to the object pool (set by the Weapon class when spawning bullets)
-    public IObjectPool<Bullet> objectPool;
+    public IObjectPool<Bullet> ObjectPool { get; set; }
 
-    private void Start()
+    void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        rb.velocity = transform.up * bulletSpeed;  // Moves bullet upward by default
+        rb.velocity = transform.up * bulletSpeed;
     }
 
-    private void OnEnable()
+    void Update()
     {
-        // Reset the velocity each time the bullet is activated
-        if (rb != null)
-        {
-            rb.velocity = transform.up * bulletSpeed;
-        }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Enemy"))  // Adjust the tag as needed
-        {
-            objectPool.Release(this);  // Return bullet to pool on collision
-        }
+        // HitboxComponent hitbox = collision.gameObject.GetComponent<HitboxComponent>();
+        // if (hitbox != null)
+        // {
+        //     hitbox.Damage(damage);
+        // }
+
+        ObjectPool.Release(this);
     }
 
-    private void OnBecameInvisible()
+    void OnBecameInvisible()
     {
-        if (objectPool != null)
+        // Return bullet to pool when it goes off-screen
+        ObjectPool.Release(this);
+    }
+
+    public void ResetBullet()
+    {
+        rb.velocity = transform.up * bulletSpeed;
+    }
+
+    public void Initialize()
+    {
+        if (rb == null)
         {
-            objectPool.Release(this);  // Return bullet to pool if it leaves the screen
+            rb = GetComponent<Rigidbody2D>();
         }
+        ResetBullet();
     }
 }

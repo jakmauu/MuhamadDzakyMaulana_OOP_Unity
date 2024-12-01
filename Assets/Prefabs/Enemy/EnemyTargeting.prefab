@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: -2413911479559936677}
   m_Layer: 0
   m_Name: EnemyTargeting
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -174,7 +174,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c7a4c3c54803914cb65d55181c1b248, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: 1
+  level: 2
+  combatManager: {fileID: 0}
+  enemySpawner: {fileID: 0}
 --- !u!114 &6173546493563082827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,7 +202,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 674f138ed2fe0a147b5fdba8ac7df670, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
+  maxHealth: 30
+  currentHealth: 0
 --- !u!114 &-2413911479559936677
 MonoBehaviour:
   m_ObjectHideFlags: 0

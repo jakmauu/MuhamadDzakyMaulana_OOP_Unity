@@ -29,6 +29,9 @@ public class Portal : MonoBehaviour
             GetComponent<SpriteRenderer>().enabled = false;
             GetComponent<Collider2D>().enabled = false;
         }
+        
+        transform.Rotate(0, 0, rotateSpeed * Time.deltaTime);
+        transform.position = Vector2.MoveTowards(transform.position, newPosition, speed * Time.deltaTime);
     }
 
     void OnTriggerEnter2D(Collider2D other)

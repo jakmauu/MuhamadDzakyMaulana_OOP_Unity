@@ -1,19 +1,20 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public int level = 1;
+    public int level;
     protected Rigidbody2D rb;
+    public CombatManager combatManager;
+    public EnemySpawner enemySpawner;
 
-    protected virtual void Start()
+    private void OnDestroy()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = 0;  // Enemies are not affected by gravity
-    }
-
-    public virtual void TakeDamage(int damage)
-    {
-        // Subtract health or handle other damage logic here
-        // (e.g., reduce health, check for destruction)
+        if (enemySpawner != null && combatManager != null)
+        {
+            enemySpawner.onDeath();
+            combatManager.onDeath(this); // Pass the enemy instance
+        }
     }
 }

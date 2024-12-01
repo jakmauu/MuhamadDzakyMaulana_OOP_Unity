@@ -1,30 +1,46 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyHorizontal : Enemy
 {
-    private Vector2 direction;
-    private float speed = 2f; // Set your desired speed
+    public float speed = 2f;
+    private Vector2 moveDirection;
 
-    protected override void Start()
+    private float spawnRangeX = 8f;  // Rentang spawn di X
+    private float spawnYRange = 4f;  // Rentang spawn di Y
+
+    private void Start()
     {
-        base.Start();
-        // Determine spawn direction: move left if spawned on the right side, and vice versa
-        direction = transform.position.x > 0 ? Vector2.left : Vector2.right;
+        RespawnAtSide();
     }
 
     private void Update()
     {
-        transform.Translate(direction * speed * Time.deltaTime);
+        // Gerakkan musuh secara horizontal
+        transform.Translate(moveDirection * speed * Time.deltaTime);
 
-        // Reverse direction when the enemy goes beyond the screen bounds
-        if (transform.position.x < -10 || transform.position.x > 10) // Adjust screen boundaries as needed
+        // Jika musuh keluar dari layar di bagian kiri atau kanan, respawn di sisi berlawanan
+        if (transform.position.x < -spawnRangeX || transform.position.x > spawnRangeX)
         {
-            direction = -direction;
+            RespawnAtSide();
         }
     }
 
-    private void OnBecameInvisible()
+    // Method untuk memposisikan musuh secara acak di sisi kiri atau kanan layar
+    private void RespawnAtSide()
     {
-        Destroy(gameObject);  // Destroy or return to object pool
+        // Tentukan sisi spawn secara acak (kiri atau kanan)
+        float spawnX = Random.Range(0, 2) == 0 ? -spawnRangeX : spawnRangeX;
+        float spawnY = Random.Range(-spawnYRange, spawnYRange);
+
+        // Set posisi musuh di sisi kiri atau kanan dengan posisi Y acak
+        transform.position = new Vector2(spawnX, spawnY);
+
+        // Tentukan arah pergerakan horizontal berdasarkan sisi spawn
+        moveDirection = spawnX < 0 ? Vector2.right : Vector2.left;
+
+        // Pastikan rotasi tetap pada keadaan awal (menghadap arah horizontal)
+        transform.rotation = Quaternion.identity;
     }
 }

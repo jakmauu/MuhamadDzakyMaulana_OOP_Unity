@@ -1,32 +1,45 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyTargeting : Enemy
 {
-    private Transform player;
-    private float speed = 3f; // Set your desired speed
+    private Transform playerTransform; // Posisi Player
+    private float speed = 2.0f;        // Kecepatan gerakan enemy
 
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
-        player = GameObject.FindWithTag("Player")?.transform;  // Ensure player has a "Player" tag
+        // Temukan Player di dalam scene
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        // Pastikan Player ditemukan sebelum menetapkan transform-nya
+        if (player != null)
+        {
+            playerTransform = player.transform;
+        }
+        else
+        {
+            Debug.LogWarning("Player not found in the scene. EnemyTargeting will not move.");
+        }
     }
 
     private void Update()
     {
-        if (player != null)
+        // Jika Player ditemukan, bergerak ke arahnya
+        if (playerTransform != null)
         {
-            // Move toward the player
-            Vector2 direction = (player.position - transform.position).normalized;
+            // Hitung arah gerakan menuju Player
+            Vector2 direction = (playerTransform.position - transform.position).normalized;
             transform.Translate(direction * speed * Time.deltaTime);
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        // Jika enemy bersentuhan dengan Player, maka enemy akan hilang
+        if (collision.CompareTag("Player"))
         {
-            // Damage player or apply other effects
-            Destroy(gameObject);  // Destroy or return to object pool
+            Destroy(gameObject); // Menghancurkan enemy saat menyentuh Player
         }
     }
 }

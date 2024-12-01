@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 8110328968258525417}
   m_Layer: 0
   m_Name: EnemyHorizontal
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -175,6 +175,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level: 1
+  combatManager: {fileID: 0}
+  enemySpawner: {fileID: 0}
 --- !u!114 &336718386464693123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,7 +202,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 674f138ed2fe0a147b5fdba8ac7df670, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 50
+  currentHealth: 0
 --- !u!114 &8110328968258525417
 MonoBehaviour:
   m_ObjectHideFlags: 0

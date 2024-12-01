@@ -124,7 +124,7 @@ MonoBehaviour:
   shootIntervalInSeconds: 0.1
   bullet: {fileID: 5467546449863534874}
   bulletSpawnPoint: {fileID: 8338740562127635653}
-  parentTransform: {fileID: 8338740562127635653}
+  parentTransform: {fileID: 0}
 --- !u!1 &4157841040821421421
 GameObject:
   m_ObjectHideFlags: 0
@@ -168,6 +168,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bullet
       objectReference: {fileID: 0}
+    - target: {fileID: 2672306790332113650, guid: d5ecc7e820c50df4ea3498823ba78739, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2785567126512819299, guid: d5ecc7e820c50df4ea3498823ba78739, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -208,6 +212,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5153990308430221815, guid: d5ecc7e820c50df4ea3498823ba78739, type: 3}
+      propertyPath: bullet
+      value: 
+      objectReference: {fileID: 5467546449863534874}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
